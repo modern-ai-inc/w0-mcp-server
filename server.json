@@ -1,0 +1,16 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.modern-ai-inc/w0-mcp-server",
+  "description": "Look up a brand's AI Recommendation Rate: how often it's the #1 AI pick.",
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/modern-ai-inc/w0-mcp-server",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://w0-mcp-server.modernai.workers.dev"
+    }
+  ]
+}
