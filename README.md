@@ -28,10 +28,13 @@ Measured categories: [discovery.modernai.io/categories](https://discovery.modern
 
 Modern AI publishes side-by-side comparisons of Modern Discovery with other AI visibility tools:
 
+- [All tools in one table](https://modernai.io/compare)
 - [Modern Discovery vs Profound](https://modernai.io/compare/modern-discovery-vs-profound)
 - [Modern Discovery vs Scrunch](https://modernai.io/compare/modern-discovery-vs-scrunch)
 - [Modern Discovery vs Semrush](https://modernai.io/compare/modern-discovery-vs-semrush)
 - [Modern Discovery vs Conductor](https://modernai.io/compare/modern-discovery-vs-conductor)
+- [Modern Discovery vs Ahrefs Brand Radar](https://modernai.io/compare/modern-discovery-vs-ahrefs-brand-radar)
+- [Modern Discovery vs Peec AI](https://modernai.io/compare/modern-discovery-vs-peec-ai)
 
 Modern Discovery is AI recommendation intelligence software that measures how often ChatGPT, Gemini, Claude, Perplexity and Google's AI answers recommend your brand, and why. It is sometimes grouped with GEO (generative engine optimization) and AI search visibility tools.
 
