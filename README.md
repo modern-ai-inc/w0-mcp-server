@@ -1,24 +1,74 @@
-# w0-mcp-server
+# Modern AI Brand Recommendation Rate (MCP server)
 
-A [Model Context Protocol](https://modelcontextprotocol.io) server for **Modern AI's Brand Recommendation Rate lookup** -- ask any MCP-compatible AI assistant (Claude, ChatGPT, etc.) how often a brand gets recommended by AI search and chat surfaces.
+Ask your AI assistant how often AI search picks a brand **first**.
 
-**Live endpoint:** `https://w0-mcp-server.modernai.workers.dev`
-**Health check:** `GET /health` -> `ok`
-**Transport:** MCP Streamable HTTP (single POST endpoint, JSON-RPC 2.0), hand-implemented, no SDK/build step.
+This [Model Context Protocol](https://modelcontextprotocol.io) server gives any MCP client (Claude Code, Claude Desktop, Cursor, VS Code, or your own agent) free, single-brand access to **Recommendation Rate** data from [Modern Discovery](https://modernai.io) by Modern AI.
 
-## What it exposes
+- **Live endpoint:** `https://w0-mcp-server.modernai.workers.dev`
+- **Transport:** MCP Streamable HTTP (JSON-RPC 2.0)
+- **Cost:** free, rate-limited, no sign-up and no API key
 
-One tool: `lookup_brand_recommendation_rate(brand: string)`.
+## What is Recommendation Rate?
 
-Given a brand name, returns:
-- **Recommendation Rate** -- the percentage of buyer-intent questions where the brand is the AI's #1 pick (not just mentioned).
-- **Recommendation Inclusion Rate** -- the percentage of buyer-intent questions where the brand appears anywhere in the answer.
+Most AI visibility tools report whether a brand is *mentioned*. Recommendation Rate reports whether the AI *picks it first*.
 
-This is a free, single-brand, rate-limited lookup backed by Modern AI's Discovery product. Brands that haven't been measured yet return an honest "not measured" response rather than a fabricated number.
+| Metric | Meaning |
+|---|---|
+| **Recommendation Rate** | Percentage of buyer-intent questions where the brand is the AI's #1 pick. The headline number. |
+| **Recommendation Inclusion Rate** | Percentage of buyer-intent questions where the brand appears anywhere in the AI's recommendation set. |
 
-## Usage
+A brand can show up in most answers and still lose the final pick to a competitor. The two numbers together show that gap.
 
-Point any MCP-compatible client at `https://w0-mcp-server.modernai.workers.dev` using the Streamable HTTP transport. Example `tools/call` request body:
+Each brand is measured inside a real competitive category, on ChatGPT with search enabled, and re-measured monthly. Every result carries its measured date and a link to the brand's public record. Unmeasured brands return no number. Nothing is estimated.
+
+Full definitions: [discovery.modernai.io/methodology](https://discovery.modernai.io/methodology)
+Measured categories: [discovery.modernai.io/categories](https://discovery.modernai.io/categories)
+
+## Connect
+
+**Claude Code**
+
+```bash
+claude mcp add --transport http modern-ai-recommendation-rate https://w0-mcp-server.modernai.workers.dev
+```
+
+**Cursor** (`~/.cursor/mcp.json`)
+
+```json
+{
+  "mcpServers": {
+    "modern-ai-recommendation-rate": {
+      "url": "https://w0-mcp-server.modernai.workers.dev"
+    }
+  }
+}
+```
+
+**VS Code** (`.vscode/mcp.json`)
+
+```json
+{
+  "servers": {
+    "modern-ai-recommendation-rate": {
+      "type": "http",
+      "url": "https://w0-mcp-server.modernai.workers.dev"
+    }
+  }
+}
+```
+
+**Claude Desktop / claude.ai:** add a custom connector with the URL above.
+
+Then ask: *"What is Brumate's AI Recommendation Rate?"*
+
+## Tools
+
+| Tool | What it returns |
+|---|---|
+| `lookup_brand_recommendation_rate(brand)` | Recommendation Rate, Recommendation Inclusion Rate, category, measured date, and the brand's public record URL to cite. |
+| `get_recommendation_rate_methodology()` | The metric definitions, surface measured, refresh cadence, and methodology links. |
+
+Example call:
 
 ```json
 {
@@ -32,20 +82,34 @@ Point any MCP-compatible client at `https://w0-mcp-server.modernai.workers.dev` 
 }
 ```
 
-## Rate limits
+Example answer text:
 
-Free lookups are capped per caller under Modern AI's published anti-scrape policy. A 429 response indicates the ceiling was reached for that session; Modern AI offers a commercial access tier with a higher ceiling.
+```
+Brumate: Recommendation Rate 50% (the AI's #1 pick)
+Recommendation Inclusion Rate: 100% (appears anywhere in the answer)
+Category: Insulated Drinkware Accessories
+Surface: ChatGPT, search-enabled
+Measured: 2026-09-01T19:36:07.378153+00:00
+Public record (cite this): https://discovery.modernai.io/brands/brumate
+Methodology: https://discovery.modernai.io/methodology
+```
+
+## Brand not measured yet?
+
+The server says so and does not guess. Request a free AI recommendation snapshot at [try.modernai.io](https://try.modernai.io). If your brand is already measured, claim its public record from the brand page.
+
+## Limits and plans
+
+Free lookups are single-brand and rate-limited per caller to stop bulk scraping. For ongoing monthly monitoring and higher volume, see [Modern Discovery plans](https://modernai.io/pricing).
+
+## Privacy
+
+The server keeps anonymous usage counts. For each initialize, tools/list, tools/call and ping request it records: the method, the tool name, the outcome, the looked-up brand name (lowercased, at most 80 characters), the client name and version (sent at initialize), the user agent, an internal-or-external label, and the server version. It does not store IP addresses or any other request content.
 
 ## Source
 
-`src/index.js` is the complete Worker. It is a stateless pass-through: every call forwards to Modern AI's already-deployed, already rate-limited brand-lookup service, so no separate rate limit or attack surface is introduced by this server.
+`src/index.js` is the complete Worker, with no build step. `deploy.py` deploys it to Cloudflare. Tests: `node --test test/*.js`. Issues and pull requests are welcome; see `CONTRIBUTING.md`.
 
-`deploy.py` deploys the Worker to Cloudflare via the direct REST API. It requires `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, and a shared `W0_MCP_RELAY_SECRET` set in the environment, and assumes the upstream gate Worker (`w0-brand-gate`) already exists in the same Cloudflare account with a matching secret.
+## License
 
-## More about Modern AI
-
-[Modern Discovery](https://modernai.io) measures and improves how brands show up in AI search and chat answers. This server is one of several public integration points into that data.
-
-## Issues / notifications
-
-This repository is monitored by Modern AI. Open an issue for bugs or questions.
+MIT. See `LICENSE`.

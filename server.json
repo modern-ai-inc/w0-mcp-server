@@ -1,8 +1,10 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.modern-ai-inc/w0-mcp-server",
-  "description": "Look up a brand's AI Recommendation Rate: how often it's the #1 AI pick.",
-  "version": "1.0.0",
+  "title": "Modern AI Brand Recommendation Rate",
+  "description": "How often AI search picks a brand first. Recommendation Rate data from Modern Discovery.",
+  "websiteUrl": "https://discovery.modernai.io/methodology",
+  "version": "1.1.0",
   "repository": {
     "url": "https://github.com/modern-ai-inc/w0-mcp-server",
     "source": "github"

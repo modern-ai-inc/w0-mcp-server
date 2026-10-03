@@ -2,8 +2,9 @@
 
 Uploads a single-file Worker implementing MCP's Streamable HTTP transport,
 with a plain-text env var binding pointing at the upstream brand-lookup gate
-and a Service Binding used to reach it in-process (see src/index.js for why
-a plain fetch() between two workers.dev Workers does not work).
+a Service Binding used to reach it in-process (see src/index.js for why
+a plain fetch() between two workers.dev Workers does not work), and an
+optional Workers Analytics Engine binding for anonymous usage counts.
 
 Reads CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, and W0_MCP_RELAY_SECRET
 from the process environment. This script assumes a Worker named
@@ -52,6 +53,8 @@ def main():
             {"type": "plain_text", "name": "W0_GATE_BASE_URL", "text": GATE_BASE_URL},
             # Service Binding, not a public fetch() -- see src/index.js.
             {"type": "service", "name": "W0_GATE", "service": UPSTREAM_SERVICE_NAME},
+            # Optional anonymous usage counts (Workers Analytics Engine).
+            {"type": "analytics_engine", "name": "W0_MCP_EVENTS", "dataset": "w0_mcp_events"},
         ],
     }
 
@@ -63,6 +66,15 @@ def main():
     print(f"Uploading {SCRIPT_NAME} ...")
     resp = requests.put(f"{base}/workers/scripts/{SCRIPT_NAME}", headers=headers, files=files, timeout=60)
     body = resp.json()
+    if not body.get("success") and any(e.get("code") == 10089 for e in body.get("errors") or []):
+        # Analytics Engine not enabled on the account: deploy without usage
+        # counting. The Worker treats a missing W0_MCP_EVENTS binding as a no-op.
+        print("WARNING: Analytics Engine is not enabled on this account; deploying without "
+              "usage counting.", file=sys.stderr)
+        metadata["bindings"] = [b for b in metadata["bindings"] if b.get("type") != "analytics_engine"]
+        files["metadata"] = (None, json.dumps(metadata), "application/json")
+        resp = requests.put(f"{base}/workers/scripts/{SCRIPT_NAME}", headers=headers, files=files, timeout=60)
+        body = resp.json()
     if not body.get("success"):
         print(f"UPLOAD FAILED ({resp.status_code}): {json.dumps(body.get('errors'), indent=2)}", file=sys.stderr)
         return 1

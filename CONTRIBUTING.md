@@ -1,6 +1,6 @@
 # Contributing
 
-This repository is maintained by Modern AI as a small, focused MCP server. It has no build step and a narrow scope (one tool, one upstream service), so please keep contributions correspondingly small.
+This repository is maintained by Modern AI as a small, focused MCP server. It has no build step and a narrow scope (two read-only tools, one upstream service), so please keep contributions correspondingly small.
 
 ## Issues and notifications
 
