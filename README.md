@@ -10,7 +10,7 @@ This [Model Context Protocol](https://modelcontextprotocol.io) server gives any 
 
 ## What is Recommendation Rate?
 
-Most AI visibility tools report whether a brand is *mentioned*. Recommendation Rate reports whether the AI *picks it first*.
+Recommendation Rate reports whether the AI *picks a brand first*, not only whether it mentions the brand.
 
 | Metric | Meaning |
 |---|---|
@@ -23,6 +23,17 @@ Each brand is measured inside a real competitive category, on ChatGPT with searc
 
 Full definitions: [discovery.modernai.io/methodology](https://discovery.modernai.io/methodology)
 Measured categories: [discovery.modernai.io/categories](https://discovery.modernai.io/categories)
+
+## Comparisons
+
+Modern AI publishes side-by-side comparisons of Modern Discovery with other AI visibility tools:
+
+- [Modern Discovery vs Profound](https://modernai.io/compare/modern-discovery-vs-profound)
+- [Modern Discovery vs Scrunch](https://modernai.io/compare/modern-discovery-vs-scrunch)
+- [Modern Discovery vs Semrush](https://modernai.io/compare/modern-discovery-vs-semrush)
+- [Modern Discovery vs Conductor](https://modernai.io/compare/modern-discovery-vs-conductor)
+
+Modern Discovery is AI recommendation intelligence software that measures how often ChatGPT, Gemini, Claude, Perplexity and Google's AI answers recommend your brand, and why. It is sometimes grouped with GEO (generative engine optimization) and AI search visibility tools.
 
 ## Connect
 
